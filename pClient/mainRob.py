@@ -11,6 +11,10 @@ leftCoord = (9999,9999)
 upCoord = (9999,9999)
 downCoord = (9999,9999)
 
+maze_width, maze_heigth = 55, 27
+centerx, centery = 27, 13 
+Maze = [[0 for x in range(maze_width)] for y in range(maze_heigth)] 
+
 class MyRob(CRobLinkAngs):
     def __init__(self, rob_name, rob_id, angles, host):
         CRobLinkAngs.__init__(self, rob_name, rob_id, angles, host)
@@ -91,26 +95,27 @@ class MyRob(CRobLinkAngs):
         left = 1
         right = 2
         back = 3
+        
+        # If robot move away to the left of the path
         if self.measures.irSensor[right] < self.measures.irSensor[left]: 
-            print('++++++')
             if self.measures.irSensor[center] > 1 or self.measures.irSensor[left] > 3:
-                print('DANGER')
-                self.driveMotors(1, -0.5)
+                print('Turning right')
+                self.driveMotors(0.15, -0.08)
             elif self.measures.irSensor[center] > 0.4:
-                print('danger')
-                self.driveMotors(1, 0.4)
+                print('Adjusting right')
+                self.driveMotors(0.15, 0.06)
             else:
-                self.driveMotors(1, 0.9)
+                self.driveMotors(0.15, 0.14)
+        # and if robot move away to the right of the path
         else:
-            print('------')
             if self.measures.irSensor[center] > 1 or self.measures.irSensor[right] > 3:
-                print('DANGER')
-                self.driveMotors(-0.5, 1)
+                print('Turning left')
+                self.driveMotors(-0.08, 0.15)
             elif self.measures.irSensor[center] > 0.5:
-                print('danger')
-                self.driveMotors(0.4, 1)
+                print('Adjusting left')
+                self.driveMotors(0.06, 0.15)
             else:
-                self.driveMotors(0.9, 1)
+                self.driveMotors(0.14, 0.15)
 
 
     def goC2(self):
@@ -149,7 +154,7 @@ class MyRob(CRobLinkAngs):
 
             # Check left sensor, if is free add to 'toExplore'
             if self.measures.irSensor[left] < 1 and intX % 2 == 0 and intY % 2 == 0:
-                print('[ LEFT ]')
+                print('[ Path on the LEFT ]')
                 if compass > -10 and compass < 10 and not upCoord in self.toExplore:
                     self.toExplore.append(upCoord)
                 elif compass > 80 and compass < 100 and not downCoord in self.toExplore:
@@ -162,7 +167,7 @@ class MyRob(CRobLinkAngs):
 
             # Check right sensor, if is free add to 'toExplore'
             if self.measures.irSensor[right] < 1 and intX % 2 == 0 and intY % 2 == 0: 
-                print('[ RIGHT ]')
+                print('[ Path on the RIGHT ]')
                 if compass > -10 and compass < 10 and not downCoord in self.toExplore:
                     self.toExplore.append(downCoord)
                 elif compass > 80 and compass < 100 and not leftCoord in self.toExplore:
@@ -175,7 +180,7 @@ class MyRob(CRobLinkAngs):
             
             # Check front sensor, if is free add to 'toExplore'
             if self.measures.irSensor[center] < 1 and intX % 2 == 0 and intY % 2 == 0:
-                print('[ CENTER ]')
+                print('[ Path on the CENTER ]')
                 if compass > -10 and compass < 10 and not rightCoord in self.toExplore:
                     self.toExplore.append(rightCoord)
                 elif compass > 80 and compass < 100 and not downCoord in self.toExplore:
@@ -230,14 +235,17 @@ class MyRob(CRobLinkAngs):
                         self.readSensors()
                 self.driveMotors(1,1)     
 
-            # add position to 'explored'
-            self.explored.append(self.dest)
-            print('explored.append(dest): ' + str(self.dest))
-            self.dest = self.toExplore[0]
-            if len(self.toExplore) > 0:
-                print('toExplore.pop(0): ' + str(self.toExplore[0]))
-                self.toExplore.pop(0)
-            print('****************************************')
+            # add position to 'explored' and updates destination
+            if(not self.inDest(self.getCoord(), self.dest)):
+                print("not yet")
+            else:    
+                self.explored.append(self.dest)
+                print('explored.append(dest): ' + str(self.dest))
+                self.dest = self.toExplore[0]
+                if len(self.toExplore) > 0:
+                    print('toExplore.pop(0): ' + str(self.toExplore[0]))
+                    self.toExplore.pop(0)
+                print('****************************************')
 
         else:
             self.driveMotors(0.1,0.1)
@@ -247,8 +255,46 @@ class MyRob(CRobLinkAngs):
         
         return
 
-    def angleToDest(self, pos, dest):
-        return 
+    def angleToDest(self, pos, dest, compass):
+        right_neighbor = (pos[0] + 2, pos[1])
+        left_neighbor = (pos[0] - 2, pos[1])
+        up_neighbor = (pos[0], pos[1] + 2)
+        down_neighbor = (pos[0], pos[1] - 2)
+        destAngle = 0
+
+        if(dest != right_neighbor and dest != left_neighbor and dest != up_neighbor and dest != down_neighbor):
+            print("Wrong destination")   
+        else:
+            if compass > -10 and compass < 10:
+                if (dest == left_neighbor): 
+                    destAngle = 180
+                elif (dest == up_neighbor): 
+                    destAngle = 90
+                elif (dest == down_neighbor): 
+                    destAngle = -90        
+            elif compass > 80 and compass < 100:
+                if (dest == left_neighbor): 
+                    destAngle = 90
+                elif (dest == right_neighbor): 
+                    destAngle = -90
+                elif (dest == down_neighbor): 
+                    destAngle = 180      
+            elif compass > -100 and compass < -80:
+                if (dest == left_neighbor): 
+                    destAngle = -90
+                elif (dest == right_neighbor): 
+                    destAngle = 90
+                elif (dest == up_neighbor): 
+                    destAngle = 180 
+            elif compass > 170 and compass < -170:
+                if (dest == up_neighbor): 
+                    destAngle = -90
+                elif (dest == right_neighbor): 
+                    destAngle = 180
+                elif (dest == down_neighbor): 
+                    destAngle = 90 
+
+        return destAngle   
 
     def getCoord(self):
         return (round(self.measures.x - self.xi, 2), round(self.measures.y - self.yi, 2))
@@ -262,18 +308,42 @@ class MyRob(CRobLinkAngs):
         if (y < 0.3): iny = True
         return (inx and iny)
     
-    def angleToDest(self, pos, dest, compass):
-        return
-
-    def drawHorWall(x,y):
-        return
+    def drawHorWall(x, y, compass):
+        if(Maze[centery+y][centerx+x] == 0):
+            Maze[centery+y][centerx+x] = "-"
+            if(compass > -100 and compass < -80):
+                Maze[centery+y+1][centerx+x] = "X"
+            elif(compass > 80 and compass < 100):
+                Maze[centery+y-1][centerx+x] = "X"
+            print('Horizontal wall at '+ str(x) +', '+ str(y))    
+        else:
+            print('Can not write at '+ str(x) +', '+ str(y))
     
-    def drawVerWall(x,y):
-        return
+    def drawVerWall(x, y, compass):
+        if(Maze[centery+y][centerx+x] == 0):
+            Maze[centery+y][centerx+x] = "|"
+            if(compass > -170 and compass < 170):
+                Maze[centery+y][centerx+x+1] = "X"
+            elif(compass > -10 and compass < 10):
+                Maze[centery+y][centerx+x-1] = "X"
+            print('Vertical wall at '+ str(x) +', '+ str(y))
+        else:
+            print('Can not write at '+ str(x) +', '+ str(y))
 
     def drawSpace(x,y):
-        return
+        if(Maze[centery+y][centerx+x] == 0):
+            Maze[centery+y][centerx+x] = "X"
+            print('Space at '+ str(x) +', '+ str(y))
+        else:
+            print('Can not write at '+ str(x) +', '+ str(y))  
 
+    def printMaze(maze):    
+        for row in maze[::-1]:
+            for col in row:
+                print(col,end = " ")
+            print()
+    
+    ## NOTA: ao fazer o output para o ficheiro, tem de se inverter as linhas como no print ( maze[::-1] )
 
 
     def wander(self):
