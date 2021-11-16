@@ -322,9 +322,9 @@ class MyRob(CRobLinkAngs):
     def drawVerWall(x, y, compass):
         if(Maze[centery+y][centerx+x] == 0):
             Maze[centery+y][centerx+x] = "|"
-            if(compass > -170 and compass < 170):
+            if(compass > -10 and compass < 10):
                 Maze[centery+y][centerx+x+1] = "X"
-            elif(compass > -10 and compass < 10):
+            elif(compass > -170 and compass < 170):
                 Maze[centery+y][centerx+x-1] = "X"
             print('Vertical wall at '+ str(x) +', '+ str(y))
         else:
