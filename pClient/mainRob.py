@@ -10,7 +10,6 @@ rightCoord = (9999,9999)
 leftCoord = (9999,9999)
 upCoord = (9999,9999)
 downCoord = (9999,9999)
-compass = 0
 
 class MyRob(CRobLinkAngs):
     def __init__(self, rob_name, rob_id, angles, host):
@@ -116,16 +115,6 @@ class MyRob(CRobLinkAngs):
 
     def goC2(self):
 
-        def turnLeft():
-            self.driveMotors(-0.15,0.15)
-            self.readSensors()
-            compass = self.measures.compass
-
-        def turnRight():
-            self.driveMotors(0.15,-0.15)
-            self.readSensors()
-            compass = self.measures.compass
-
         center = 0
         left = 1
         right = 2
@@ -140,19 +129,21 @@ class MyRob(CRobLinkAngs):
         print('Explore:  ' + str(self.toExplore))
         print('Explored: ' + str(self.explored))
 
+        intX = int(round(x,0))
+        intY = int(round(y,0))
+        rightCoord = (intX + 2, intY)
+        leftCoord = (intX - 2, intY)
+        upCoord = (intX, intY + 2)
+        downCoord = (intX, intY - 2)
+
         if self.inDest((x,y), self.dest):
             if self.cycle == 0:
-                self.driveMotors(0.15,0.15)
+                self.driveMotors(0.1,0.1)
             else:
                 self.driveMotors(0,0)
             print('******************DEST******************')
             # Check sensors for points to explore
-            intX = int(round(x,0))
-            intY = int(round(y,0))
-            rightCoord = (intX + 2, intY)
-            leftCoord = (intX - 2, intY)
-            upCoord = (intX, intY + 2)
-            downCoord = (intX, intY - 2)
+            
             print(str(intX) + ' ' + str(intY))
             print(str(self.measures.irSensor[left]) + ' ' + str(self.measures.irSensor[right]))
 
@@ -195,6 +186,50 @@ class MyRob(CRobLinkAngs):
                     self.toExplore.append(leftCoord)
                 self.toExplore = list(set(self.toExplore))
         
+            
+
+            if self.measures.compass > -10 and self.measures.compass < 10:
+                if self.dest == downCoord:
+                    while (self.measures.compass > -80): 
+                        self.driveMotors(0.05,-0.05)
+                        self.readSensors()
+                elif self.dest == upCoord:
+                    while (self.measures.compass < 80):
+                        self.driveMotors(-0.05,0.05)
+                        self.readSensors()
+                self.driveMotors(1,1)
+            elif self.measures.compass > 80 and self.measures.compass < 100:
+                if self.dest == leftCoord:
+                    while (self.measures.compass > 0): 
+                        self.driveMotors(-0.05,0.05)
+                        self.readSensors()
+                elif self.dest == rightCoord:
+                    while (self.measures.compass > 0):
+                        self.driveMotors(0.05,-0.05)
+                        self.readSensors()
+                        compass = self.measures.compass
+                self.driveMotors(1,1)
+            elif self.measures.compass > -100 and self.measures.compass < -80:
+                if self.dest == leftCoord:
+                    while (self.measures.compass < 0): 
+                        self.driveMotors(0.05,-0.05)
+                        self.readSensors()
+                elif self.dest == rightCoord:
+                    while (self.measures.compass < 0):
+                        self.driveMotors(-0.05,0.05)
+                        self.readSensors()
+                self.driveMotors(1,1)
+            elif self.measures.compass > 170 and self.measures.compass < -170:
+                if self.dest == downCoord:
+                    while (self.measures.compass < -90): 
+                        self.driveMotors(-0.05,0.05)
+                        self.readSensors()
+                elif self.dest == upCoord:
+                    while (self.measures.compass > 90):
+                        self.driveMotors(0.05,-0.05)
+                        self.readSensors()
+                self.driveMotors(1,1)     
+
             # add position to 'explored'
             self.explored.append(self.dest)
             print('explored.append(dest): ' + str(self.dest))
@@ -204,92 +239,16 @@ class MyRob(CRobLinkAngs):
                 self.toExplore.pop(0)
             print('****************************************')
 
-            
-
         else:
-            self.driveMotors(0.15,0.15)
+            self.driveMotors(0.1,0.1)
         
 
     def rotate(self):
-        compass = self.measures.compass
-        if compass > -10 and compass < 10:
-                if self.dest == downCoord:
-                    while (self.measures.compass < 90): 
-                        self.driveMotors(0.15,-0.15)
-                        self.readSensors()
-                        compass = self.measures.compass
-                    self.driveMotors(-0.15,0.15)
-                elif self.dest == upCoord:
-                    while (self.measures.compass < 90): 
-                        print(self.measures.compass)
-                        self.driveMotors(-0.05,0.05)
-                        self.readSensors()
-                        compass = self.measures.compass
-                    self.driveMotors(0.15,-0.15)
-        elif compass > 80 and compass < 100:
-            if self.dest == rightCoord:
-                while (self.measures.compass > 0): turnLeft()
-                self.driveMotors(0,0)
-            elif self.dest == leftCoord:
-                while (self.measures.compass > 0): turnRight()
-                self.driveMotors(0,0)
-        elif compass > -100 and compass < -80:
-            if self.dest == leftCoord:
-                while (self.measures.compass < 0): turnLeft()
-                self.driveMotors(0,0)
-            elif self.dest == rightCoord:
-                while (self.measures.compass < 0): turnRight()
-                self.driveMotors(0,0)
-        elif compass > 170 and compass < -170:
-            if self.dest == downCoord:
-                while (self.measures.compass > 90): turnLeft()
-                self.driveMotors(0,0)
-            elif self.dest == upCoord:
-                while (self.measures.compass < -90): turnRight()
-                self.driveMotors(0,0)
+        
         return
 
     def angleToDest(self, pos, dest):
-        return angle
-
-    def turnRight(self):
-        compass = self.measures.compass
-        if compass > -10 and compass < 10:
-                if self.dest == downCoord:
-                    while (self.measures.compass < 90): 
-                        self.driveMotors(0.15,-0.15)
-                        self.readSensors()
-                        compass = self.measures.compass
-                    self.driveMotors(-0.15,0.15)
-                elif self.dest == upCoord:
-                    while (self.measures.compass < 90): 
-                        print(self.measures.compass)
-                        self.driveMotors(-0.05,0.05)
-                        self.readSensors()
-                        compass = self.measures.compass
-                    self.driveMotors(0.15,-0.15)
-        elif compass > 80 and compass < 100:
-            if self.dest == rightCoord:
-                while (self.measures.compass > 0): turnLeft()
-                self.driveMotors(0,0)
-            elif self.dest == leftCoord:
-                while (self.measures.compass > 0): turnRight()
-                self.driveMotors(0,0)
-        elif compass > -100 and compass < -80:
-            if self.dest == leftCoord:
-                while (self.measures.compass < 0): turnLeft()
-                self.driveMotors(0,0)
-            elif self.dest == rightCoord:
-                while (self.measures.compass < 0): turnRight()
-                self.driveMotors(0,0)
-        elif compass > 170 and compass < -170:
-            if self.dest == downCoord:
-                while (self.measures.compass > 90): turnLeft()
-                self.driveMotors(0,0)
-            elif self.dest == upCoord:
-                while (self.measures.compass < -90): turnRight()
-                self.driveMotors(0,0)
-        return
+        return 
 
     def getCoord(self):
         return (round(self.measures.x - self.xi, 2), round(self.measures.y - self.yi, 2))
@@ -299,8 +258,8 @@ class MyRob(CRobLinkAngs):
         iny = False
         x = abs(dest[0] - pos[0])
         y = abs(dest[0] - pos[0])
-        if (x < 0.2): inx = True
-        if (y < 0.2): iny = True
+        if (x < 0.3): inx = True
+        if (y < 0.3): iny = True
         return (inx and iny)
     
     def angleToDest(self, pos, dest, compass):
