@@ -133,43 +133,113 @@ class MyRob(CRobLinkAngs):
 
         def checkSensors(intX, intY):
 
-            # Check front sensor, if is free add to 'toExplore'
-            if self.measures.irSensor[center] < DISTANCE_WALL and intX % 2 == 0 and intY % 2 == 0:
-                print('[CENTER]')
+            drawMaze(intX, intY, 'I')
+
+            # Check front sensor, if it's free add to 'toExplore'
+            if self.measures.irSensor[center] < DISTANCE_WALL:
+                #if intX % 2 == 0 and intY % 2 == 0:
+                print('[Path at CENTER]')
                 if self.measures.compass > -10 and self.measures.compass < 10 and not rightCoord in self.toExplore:
                     self.toExplore.append(rightCoord)
+                    drawMaze(*rightCoord, 'S')
+                    drawMaze(intX+1, intY, 'S')
                 elif self.measures.compass > 80 and self.measures.compass < 100 and not upCoord in self.toExplore:
                     self.toExplore.append(upCoord)
+                    drawMaze(*upCoord, 'S')
+                    drawMaze(intX, intY+1, 'S')
                 elif self.measures.compass > -100 and self.measures.compass < -80 and not downCoord in self.toExplore:
                     self.toExplore.append(downCoord)
+                    drawMaze(*downCoord, 'S')
+                    drawMaze(intX, intY-1, 'S')
                 elif self.measures.compass > 170 and self.measures.compass < -170 and not leftCoord in self.toExplore:
-                    self.toExplore.append(leftCoord)
+                    self.toExplore.append(leftCoord)  
+                    drawMaze(*leftCoord, 'S')
+                    drawMaze(intX-1, intY, 'S')
+                
+            # if not, it's a wall
+            else:
+                if(intX % 2 == 0 and intY % 2 == 0):
+                    if self.measures.compass > -10 and self.measures.compass < 10 and not rightCoord in self.toExplore:
+                        drawMaze(intX+1, intY, 'V')
+                    elif self.measures.compass > 80 and self.measures.compass < 100 and not upCoord in self.toExplore:
+                        drawMaze(intX, intY+1, 'H')
+                    elif self.measures.compass > -100 and self.measures.compass < -80 and not downCoord in self.toExplore:
+                        drawMaze(intX, intY-1, 'H')
+                    elif self.measures.compass > 170 and self.measures.compass < -170 and not leftCoord in self.toExplore:
+                        drawMaze(intX-1, intY, 'V')              
+
 
             # Check left sensor, if is free add to 'toExplore'
-            if self.measures.irSensor[left] < DISTANCE_WALL and intX % 2 == 0 and intY % 2 == 0:
-                print('[LEFT]')
+            if self.measures.irSensor[left] < DISTANCE_WALL:
+                #if intX % 2 == 0 and intY % 2 == 0:
+                print('[Path at LEFT]')
                 if self.measures.compass > -10 and self.measures.compass < 10 and not upCoord in self.toExplore:
                     self.toExplore.append(upCoord)
+                    drawMaze(*upCoord, 'S')
+                    drawMaze(intX, intY+1, 'S')
                 elif self.measures.compass > 80 and self.measures.compass < 100 and not leftCoord in self.toExplore:
                     self.toExplore.append(leftCoord)
+                    drawMaze(*leftCoord, 'S')
+                    drawMaze(intX-1, intY, 'S')
                 elif self.measures.compass > -100 and self.measures.compass < -80 and not rightCoord in self.toExplore:
                     self.toExplore.append(rightCoord)
+                    drawMaze(*rightCoord, 'S')
+                    drawMaze(intX+1, intY, 'S')
                 elif self.measures.compass > 170 and self.measures.compass < -170 and not downCoord in self.toExplore:
                     self.toExplore.append(downCoord)
+                    drawMaze(*downCoord, 'S')
+                    drawMaze(intX, intY-1, 'S')
+
+            # if not, it's a wall
+            else:
+                if intX % 2 == 0 and intY % 2 == 0:
+                    if self.measures.compass > -10 and self.measures.compass < 10 and not upCoord in self.toExplore:
+                        drawMaze(intX, intY+1, 'H')
+                    elif self.measures.compass > 80 and self.measures.compass < 100 and not leftCoord in self.toExplore:
+                        drawMaze(intX-1, intY, 'V')
+                    elif self.measures.compass > -100 and self.measures.compass < -80 and not rightCoord in self.toExplore:
+                        drawMaze(intX+1, intY, 'V')
+                    elif self.measures.compass > 170 and self.measures.compass < -170 and not downCoord in self.toExplore:
+                        drawMaze(intX, intY-1, 'H')
+
+                        
 
             # Check right sensor, if is free add to 'toExplore'
-            if self.measures.irSensor[right] < DISTANCE_WALL and intX % 2 == 0 and intY % 2 == 0: 
-                print('[RIGHT]')
+            if self.measures.irSensor[right] < DISTANCE_WALL:
+                #if intX % 2 == 0 and intY % 2 == 0:
+                print('[Path at RIGHT]')
                 if self.measures.compass > -10 and self.measures.compass < 10 and not downCoord in self.toExplore:
                     self.toExplore.append(downCoord)
+                    drawMaze(*downCoord, 'S')
+                    drawMaze(intX, intY-1, 'S')
                 elif self.measures.compass > 80 and self.measures.compass < 100 and not rightCoord in self.toExplore:
                     self.toExplore.append(rightCoord)
+                    drawMaze(*rightCoord, 'S')
+                    drawMaze(intX+1, intY, 'S')
                 elif self.measures.compass > -100 and self.measures.compass < -80 and not leftCoord in self.toExplore:
                     self.toExplore.append(leftCoord)
+                    drawMaze(*leftCoord, 'S')
+                    drawMaze(intX-1, intY, 'S')
                 elif self.measures.compass > 170 and self.measures.compass < -170 and not upCoord in self.toExplore:
                     self.toExplore.append(upCoord)
+                    drawMaze(*upCoord, 'S')
+                    drawMaze(intX, intY+1, 'S')
+
+            # if not, it's a wall
+            else:
+                if intX % 2 == 0 and intY % 2 == 0:
+                    if self.measures.compass > -10 and self.measures.compass < 10 and not downCoord in self.toExplore:
+                        drawMaze(intX, intY-1, 'H')
+                    elif self.measures.compass > 80 and self.measures.compass < 100 and not rightCoord in self.toExplore:
+                        drawMaze(intX+1, intY, 'V')
+                    elif self.measures.compass > -100 and self.measures.compass < -80 and not leftCoord in self.toExplore:
+                        drawMaze(intX-1, intY, 'V')
+                    elif self.measures.compass > 170 and self.measures.compass < -170 and not upCoord in self.toExplore:
+                        drawMaze(intX, intY+1, 'H')
 
             self.toExplore = list(set(self.toExplore))
+            #printMaze(Maze)
+            mazeToFile(Maze)
 
         def inDest(pos, dest):
             inx = False
@@ -186,13 +256,13 @@ class MyRob(CRobLinkAngs):
                     while (self.measures.compass > -90 + ANGLE_MARGIN): 
                         self.driveMotors(ROTATION_SPEED,-ROTATION_SPEED)
                         self.readSensors()
-                        print('Comp: ' + str(self.measures.compass))
+                        #print('Comp: ' + str(self.measures.compass))
                     return True
                 elif self.dest[0] == upCoord[0] and self.dest[1] == upCoord[1]:
                     while (self.measures.compass < 90 - ANGLE_MARGIN):
                         self.driveMotors(-ROTATION_SPEED,ROTATION_SPEED)
                         self.readSensors()
-                        print('Comp: ' + str(self.measures.compass))
+                        #print('Comp: ' + str(self.measures.compass))
                     return True
                 else:
                     return False
@@ -201,13 +271,13 @@ class MyRob(CRobLinkAngs):
                     while (self.measures.compass < 180 - ANGLE_MARGIN or self.measures.compass > 0): 
                         self.driveMotors(-ROTATION_SPEED,ROTATION_SPEED)
                         self.readSensors()
-                        print('Comp: ' + str(self.measures.compass))
+                        #print('Comp: ' + str(self.measures.compass))
                     return True
                 elif self.dest == rightCoord:
                     while (self.measures.compass > 0 + ANGLE_MARGIN):
                         self.driveMotors(ROTATION_SPEED,-ROTATION_SPEED)
                         self.readSensors()
-                        print('Comp: ' + str(self.measures.compass))
+                        #print('Comp: ' + str(self.measures.compass))
                     return True
                 else:
                     return False
@@ -216,13 +286,13 @@ class MyRob(CRobLinkAngs):
                     while (self.measures.compass > -180 + ANGLE_MARGIN or self.measures.compass < 0): 
                         self.driveMotors(ROTATION_SPEED,-ROTATION_SPEED)
                         self.readSensors()
-                        print('Comp: ' + str(self.measures.compass))
+                        #print('Comp: ' + str(self.measures.compass))
                     return True
                 elif self.dest == rightCoord:
                     while (self.measures.compass < 0 - ANGLE_MARGIN):
                         self.driveMotors(-ROTATION_SPEED,ROTATION_SPEED)
                         self.readSensors()
-                        print('Comp: ' + str(self.measures.compass))
+                        #print('Comp: ' + str(self.measures.compass))
                     return True
                 else:
                     return False
@@ -231,13 +301,13 @@ class MyRob(CRobLinkAngs):
                     while (self.measures.compass < -90 - ANGLE_MARGIN): 
                         self.driveMotors(-ROTATION_SPEED,ROTATION_SPEED)
                         self.readSensors()
-                        print('Comp: ' + str(self.measures.compass))
+                        #print('Comp: ' + str(self.measures.compass))
                     return True
                 elif self.dest == upCoord:
                     while (self.measures.compass > 90 + ANGLE_MARGIN):
                         self.driveMotors(ROTATION_SPEED,-ROTATION_SPEED)
                         self.readSensors()
-                        print('Comp: ' + str(self.measures.compass))
+                        #print('Comp: ' + str(self.measures.compass))
                     return True
                 else:
                     return False
@@ -267,15 +337,86 @@ class MyRob(CRobLinkAngs):
 
         def updateDest():
             self.explored.append(self.dest)
-            print('explored.append(dest): ' + str(self.dest))
+            #print('explored.append(dest): ' + str(self.dest))
             self.dest = self.toExplore[0]
             if len(self.toExplore) > 0:
-                print('toExplore.pop(0): ' + str(self.toExplore[0]))
+                #print('toExplore.pop(0): ' + str(self.toExplore[0]))
                 self.toExplore.pop(0)
             else:
                 sys.exit()
-            
 
+	# ( typeOfChar: I - Initial; H - Horiz. wall; V - Vert. wall; S - Space )
+        def drawMaze(x, y, typeOfChar):
+            if typeOfChar == 'I':
+                draw = 'I'
+                sentence = 'Initial point'
+            elif typeOfChar == 'H':
+                draw = '-'
+                sentence = 'Horizontal wall'
+            elif typeOfChar == 'V':        
+                draw = '|'
+                sentence = 'Vertical wall'
+            elif typeOfChar == 'S':
+                draw = "X"
+                sentence = 'Space' 
+            
+            if(Maze[centery+y][centerx+x] == 0):
+                Maze[centery+y][centerx+x] = draw
+                print(sentence+' at '+ str(x) +', '+ str(y))
+
+        def printMaze(maze):    
+            for row in maze[::-1]:
+                for col in row:
+                    print(col,end = " ")
+                print()
+
+        def mazeToFile(maze):
+            with open("maze.txt", "w") as txt_file:
+                for row in maze[::-1]:
+                    for col in row:
+                        txt_file.write(str(col).replace('0',' '))
+                    txt_file.write("\n")            
+       
+        def angleToDest(self, pos, dest, compass):
+            right_neighbor = (pos[0] + 2, pos[1])
+            left_neighbor = (pos[0] - 2, pos[1])
+            up_neighbor = (pos[0], pos[1] + 2)
+            down_neighbor = (pos[0], pos[1] - 2)
+            destAngle = 0
+
+            if(dest != right_neighbor and dest != left_neighbor and dest != up_neighbor and dest != down_neighbor):
+                print("Wrong destination")   
+            else:
+                if compass > -10 and compass < 10:
+                    if (dest == left_neighbor): 
+                        destAngle = 180
+                    elif (dest == up_neighbor): 
+                        destAngle = 90
+                    elif (dest == down_neighbor): 
+                        destAngle = -90        
+                elif compass > 80 and compass < 100:
+                    if (dest == left_neighbor): 
+                        destAngle = 90
+                    elif (dest == right_neighbor): 
+                        destAngle = -90
+                    elif (dest == down_neighbor): 
+                        destAngle = 180      
+                elif compass > -100 and compass < -80:
+                    if (dest == left_neighbor): 
+                        destAngle = -90
+                    elif (dest == right_neighbor): 
+                        destAngle = 90
+                    elif (dest == up_neighbor): 
+                        destAngle = 180 
+                elif compass > 170 and compass < -170:
+                    if (dest == up_neighbor): 
+                        destAngle = -90
+                    elif (dest == right_neighbor): 
+                        destAngle = 180
+                    elif (dest == down_neighbor): 
+                        destAngle = 90 
+
+            return destAngle   
 
         (x,y) = getCoord()
         intX = int(round(x,0))
@@ -286,11 +427,11 @@ class MyRob(CRobLinkAngs):
         downCoord = (intX, intY - 2)
 
         print("----------------------------------------")
-        print('\t\t  ' + str(self.cycle))
+        print('\t\t Cycle ' + str(self.cycle))
         print("----------------------------------------")
         print('Pos: (' + str(x) + ', ' + str(y) + ')  \tDest: ' + str(self.dest))
-        print('Comp: ' + str(self.measures.compass))
-        print('Explore:  ' + str(self.toExplore))
+        print('Compass: ' + str(self.measures.compass))
+        print('To Explore:  ' + str(self.toExplore))
         print('Explored: ' + str(self.explored))
 
 
@@ -301,9 +442,7 @@ class MyRob(CRobLinkAngs):
             # else:
             #     self.driveMotors(0,0)
 
-            print('****************************************')
-            print('******************DEST******************')
-            print('****************************************')
+            print('\n********** Reached Destination *********\n\n')
             # print('Dest: ' + str(self.dest))
             # print('UpCoord: ' + str(upCoord))
 
@@ -316,91 +455,11 @@ class MyRob(CRobLinkAngs):
             # print('RoundPos: (' + str(intX) + ', ' + str(intY) + ')')
             print('LeftSensor: ' + str(self.measures.irSensor[left]))
             print('RightSensor: ' + str(self.measures.irSensor[right]))
-            # print('****************************************')
 
         else:
             self.driveMotors(DRIVE_SPEED,DRIVE_SPEED)          
 
         allign()  
-
-
-    def angleToDest(self, pos, dest, compass):
-        right_neighbor = (pos[0] + 2, pos[1])
-        left_neighbor = (pos[0] - 2, pos[1])
-        up_neighbor = (pos[0], pos[1] + 2)
-        down_neighbor = (pos[0], pos[1] - 2)
-        destAngle = 0
-
-        if(dest != right_neighbor and dest != left_neighbor and dest != up_neighbor and dest != down_neighbor):
-            print("Wrong destination")   
-        else:
-            if compass > -10 and compass < 10:
-                if (dest == left_neighbor): 
-                    destAngle = 180
-                elif (dest == up_neighbor): 
-                    destAngle = 90
-                elif (dest == down_neighbor): 
-                    destAngle = -90        
-            elif compass > 80 and compass < 100:
-                if (dest == left_neighbor): 
-                    destAngle = 90
-                elif (dest == right_neighbor): 
-                    destAngle = -90
-                elif (dest == down_neighbor): 
-                    destAngle = 180      
-            elif compass > -100 and compass < -80:
-                if (dest == left_neighbor): 
-                    destAngle = -90
-                elif (dest == right_neighbor): 
-                    destAngle = 90
-                elif (dest == up_neighbor): 
-                    destAngle = 180 
-            elif compass > 170 and compass < -170:
-                if (dest == up_neighbor): 
-                    destAngle = -90
-                elif (dest == right_neighbor): 
-                    destAngle = 180
-                elif (dest == down_neighbor): 
-                    destAngle = 90 
-
-        return destAngle   
-    
-    def drawHorWall(x, y, compass):
-        if(Maze[centery+y][centerx+x] == 0):
-            Maze[centery+y][centerx+x] = "-"
-            if(compass > -100 and compass < -80):
-                Maze[centery+y+1][centerx+x] = "X"
-            elif(compass > 80 and compass < 100):
-                Maze[centery+y-1][centerx+x] = "X"
-            print('Horizontal wall at '+ str(x) +', '+ str(y))    
-        else:
-            print('Can not write at '+ str(x) +', '+ str(y))
-    
-    def drawVerWall(x, y, compass):
-        if(Maze[centery+y][centerx+x] == 0):
-            Maze[centery+y][centerx+x] = "|"
-            if(compass > -10 and compass < 10):
-                Maze[centery+y][centerx+x+1] = "X"
-            elif(compass > -170 and compass < 170):
-                Maze[centery+y][centerx+x-1] = "X"
-            print('Vertical wall at '+ str(x) +', '+ str(y))
-        else:
-            print('Can not write at '+ str(x) +', '+ str(y))
-
-    def drawSpace(x,y):
-        if(Maze[centery+y][centerx+x] == 0):
-            Maze[centery+y][centerx+x] = "X"
-            print('Space at '+ str(x) +', '+ str(y))
-        else:
-            print('Can not write at '+ str(x) +', '+ str(y))  
-
-    def printMaze(maze):    
-        for row in maze[::-1]:
-            for col in row:
-                print(col,end = " ")
-            print()
-    
-    ## NOTA: ao fazer o output para o ficheiro, tem de se inverter as linhas como no print ( maze[::-1] )
 
 
     def wander(self):
