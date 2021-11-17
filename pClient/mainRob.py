@@ -10,8 +10,9 @@ CELLCOLS = 14
 # Variables
 DEST_MARGIN = 0.3           # Margem para verificar se está no destino
 DISTANCE_WALL = 1.3         # Valor dos sensores para detetarem uma parede
-ANGLE_MARGIN = 15           # Margem para parar a rotação
+ANGLE_MARGIN = 10           # Margem para parar a rotação
 ROTATION_SPEED = 0.05       # Velocidade para rodar
+LOW_ROTATION_SPEED = 0.02   # Velocidade para alinhar
 DRIVE_SPEED = 0.15          # Velocidade para andar
 rightCoord = (9999,9999)
 leftCoord = (9999,9999)
@@ -174,7 +175,7 @@ class MyRob(CRobLinkAngs):
             inx = False
             iny = False
             x = abs(dest[0] - pos[0])
-            y = abs(dest[0] - pos[0])
+            y = abs(dest[1] - pos[1])
             if (x < DEST_MARGIN): inx = True
             if (y < DEST_MARGIN): iny = True
             return (inx and iny)
@@ -187,7 +188,7 @@ class MyRob(CRobLinkAngs):
                         self.readSensors()
                         print('Comp: ' + str(self.measures.compass))
                     return True
-                elif self.dest == upCoord:
+                elif self.dest[0] == upCoord[0] and self.dest[1] == upCoord[1]:
                     while (self.measures.compass < 90 - ANGLE_MARGIN):
                         self.driveMotors(-ROTATION_SPEED,ROTATION_SPEED)
                         self.readSensors()
@@ -203,7 +204,7 @@ class MyRob(CRobLinkAngs):
                         print('Comp: ' + str(self.measures.compass))
                     return True
                 elif self.dest == rightCoord:
-                    while (self.measures.compass > 0 - ANGLE_MARGIN):
+                    while (self.measures.compass > 0 + ANGLE_MARGIN):
                         self.driveMotors(ROTATION_SPEED,-ROTATION_SPEED)
                         self.readSensors()
                         print('Comp: ' + str(self.measures.compass))
@@ -242,6 +243,28 @@ class MyRob(CRobLinkAngs):
                     return False
             self.driveMotors(DRIVE_SPEED,DRIVE_SPEED)
 
+        def allign():
+            if self.measures.compass > -20 and self.measures.compass < 20:
+                if self.measures.compass < 0:
+                    self.driveMotors(LOW_ROTATION_SPEED, 2*LOW_ROTATION_SPEED)
+                elif self.measures.compass > 0:
+                    self.driveMotors(2*LOW_ROTATION_SPEED, LOW_ROTATION_SPEED)
+            elif self.measures.compass > 70 and self.measures.compass < 110:
+                if self.measures.compass < 90:
+                    self.driveMotors(LOW_ROTATION_SPEED, 2*LOW_ROTATION_SPEED)
+                elif self.measures.compass > 90:
+                    self.driveMotors(2*LOW_ROTATION_SPEED, LOW_ROTATION_SPEED)
+            elif self.measures.compass > -110 and self.measures.compass < -70:      
+                if self.measures.compass < -90:
+                    self.driveMotors(LOW_ROTATION_SPEED, 2*LOW_ROTATION_SPEED)
+                elif self.measures.compass > -90:
+                    self.driveMotors(2*LOW_ROTATION_SPEED, LOW_ROTATION_SPEED)          
+            elif self.measures.compass > 160 and self.measures.compass < -160:          
+                if self.measures.compass > 0:
+                    self.driveMotors(LOW_ROTATION_SPEED, 2*LOW_ROTATION_SPEED)
+                elif self.measures.compass < 0:
+                    self.driveMotors(2*LOW_ROTATION_SPEED, LOW_ROTATION_SPEED)      
+
         def updateDest():
             self.explored.append(self.dest)
             print('explored.append(dest): ' + str(self.dest))
@@ -270,6 +293,7 @@ class MyRob(CRobLinkAngs):
         print('Explore:  ' + str(self.toExplore))
         print('Explored: ' + str(self.explored))
 
+
         if inDest((x,y), self.dest):
 
             if self.cycle == 0:
@@ -280,12 +304,14 @@ class MyRob(CRobLinkAngs):
             print('****************************************')
             print('******************DEST******************')
             print('****************************************')
+            # print('Dest: ' + str(self.dest))
+            # print('UpCoord: ' + str(upCoord))
 
             checkSensors(intX, intY)
+            
+            updateDest()
 
             hadRotation = rotate()
-
-            updateDest()
             
             # print('RoundPos: (' + str(intX) + ', ' + str(intY) + ')')
             print('LeftSensor: ' + str(self.measures.irSensor[left]))
@@ -293,7 +319,9 @@ class MyRob(CRobLinkAngs):
             # print('****************************************')
 
         else:
-            self.driveMotors(DRIVE_SPEED,DRIVE_SPEED)            
+            self.driveMotors(DRIVE_SPEED,DRIVE_SPEED)          
+
+        allign()  
 
 
     def angleToDest(self, pos, dest, compass):
