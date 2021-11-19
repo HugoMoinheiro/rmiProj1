@@ -10,10 +10,11 @@ CELLROWS = 7
 CELLCOLS = 14
 
 # Variables
-DEST_MARGIN = 0.1          # Margem para verificar se está no destino
+DEST_MARGIN = 0.1           # Margem para verificar se está no destino
 DISTANCE_WALL = 1.5         # Valor dos sensores para detetarem uma parede
 ANGLE_MARGIN = 10           # Margem para parar a rotação
-ROTATION_SPEED = 0.1       # Velocidade para rodar
+ANGLE_TOL = 5
+ROTATION_SPEED = 0.1        # Velocidade para rodar
 LOW_ROTATION_SPEED = 0.02   # Velocidade para alinhar
 DRIVE_SPEED = 0.05          # Velocidade para andar
 rightCoord = (9999,9999)
@@ -131,7 +132,7 @@ class MyRob(CRobLinkAngs):
     def goC2(self):
 
         def getCoord():
-            return (round(self.measures.x - self.xInit, 2), round(self.measures.y - self.yInit, 2))
+            return (round(self.measures.x - self.xInit, 1), round(self.measures.y - self.yInit, 1))
 
         def checkSensors(intX, intY):
 
@@ -141,20 +142,20 @@ class MyRob(CRobLinkAngs):
             # Check front sensor, if it's free add to 'toExplore'
             if self.measures.irSensor[center] < DISTANCE_WALL:
                 #if intX % 2 == 0 and intY % 2 == 0:
-                print('[Path at CENTER]')
-                if self.measures.compass > -10 and self.measures.compass < 10 and not rightCoord in self.toExplore:
+                print('[CENTER]')
+                if self.measures.compass > -20 and self.measures.compass < 20 and not rightCoord in self.toExplore:
                     toAdd.insert(-1,rightCoord)
                     drawMaze(*rightCoord, 'S')
                     drawMaze(intX+1, intY, 'S')
-                elif self.measures.compass > 80 and self.measures.compass < 100 and not upCoord in self.toExplore:
+                elif self.measures.compass > 70 and self.measures.compass < 110 and not upCoord in self.toExplore:
                     toAdd.insert(-1,upCoord)
                     drawMaze(*upCoord, 'S')
                     drawMaze(intX, intY+1, 'S')
-                elif self.measures.compass > -100 and self.measures.compass < -80 and not downCoord in self.toExplore:
+                elif self.measures.compass > -110 and self.measures.compass < -70 and not downCoord in self.toExplore:
                     toAdd.insert(-1,downCoord)
                     drawMaze(*downCoord, 'S')
                     drawMaze(intX, intY-1, 'S')
-                elif self.measures.compass > 170 and self.measures.compass < -170 and not leftCoord in self.toExplore:
+                elif self.measures.compass > 160 and self.measures.compass < -160 and not leftCoord in self.toExplore:
                     toAdd.insert(-1,leftCoord)  
                     drawMaze(*leftCoord, 'S')
                     drawMaze(intX-1, intY, 'S')
@@ -162,33 +163,33 @@ class MyRob(CRobLinkAngs):
             # if not, it's a wall
             else:
                 if(intX % 2 == 0 and intY % 2 == 0):
-                    if self.measures.compass > -10 and self.measures.compass < 10 and not rightCoord in self.toExplore:
+                    if self.measures.compass > -20 and self.measures.compass < 20 and not rightCoord in self.toExplore:
                         drawMaze(intX+1, intY, 'V')
-                    elif self.measures.compass > 80 and self.measures.compass < 100 and not upCoord in self.toExplore:
+                    elif self.measures.compass > 70 and self.measures.compass < 110 and not upCoord in self.toExplore:
                         drawMaze(intX, intY+1, 'H')
-                    elif self.measures.compass > -100 and self.measures.compass < -80 and not downCoord in self.toExplore:
+                    elif self.measures.compass > -110 and self.measures.compass < -70 and not downCoord in self.toExplore:
                         drawMaze(intX, intY-1, 'H')
-                    elif self.measures.compass > 170 and self.measures.compass < -170 and not leftCoord in self.toExplore:
+                    elif self.measures.compass > 160 and self.measures.compass < -160 and not leftCoord in self.toExplore:
                         drawMaze(intX-1, intY, 'V')              
 
 
             # Check left sensor, if is free add to 'toExplore'
             if self.measures.irSensor[left] < DISTANCE_WALL:
                 #if intX % 2 == 0 and intY % 2 == 0:
-                print('[Path at LEFT]')
-                if self.measures.compass > -10 and self.measures.compass < 10 and not upCoord in self.toExplore:
+                print('[LEFT]')
+                if self.measures.compass > -20 and self.measures.compass < 20 and not upCoord in self.toExplore:
                     toAdd.insert(-1,upCoord)
                     drawMaze(*upCoord, 'S')
                     drawMaze(intX, intY+1, 'S')
-                elif self.measures.compass > 80 and self.measures.compass < 100 and not leftCoord in self.toExplore:
+                elif self.measures.compass > 70 and self.measures.compass < 110 and not leftCoord in self.toExplore:
                     toAdd.insert(-1,leftCoord)
                     drawMaze(*leftCoord, 'S')
                     drawMaze(intX-1, intY, 'S')
-                elif self.measures.compass > -100 and self.measures.compass < -80 and not rightCoord in self.toExplore:
+                elif self.measures.compass > -110 and self.measures.compass < -70 and not rightCoord in self.toExplore:
                     toAdd.insert(-1,rightCoord)
                     drawMaze(*rightCoord, 'S')
                     drawMaze(intX+1, intY, 'S')
-                elif self.measures.compass > 170 and self.measures.compass < -170 and not downCoord in self.toExplore:
+                elif self.measures.compass > 160 and self.measures.compass < -160 and not downCoord in self.toExplore:
                     toAdd.insert(-1,downCoord)
                     drawMaze(*downCoord, 'S')
                     drawMaze(intX, intY-1, 'S')
@@ -196,13 +197,13 @@ class MyRob(CRobLinkAngs):
             # if not, it's a wall
             else:
                 if intX % 2 == 0 and intY % 2 == 0:
-                    if self.measures.compass > -10 and self.measures.compass < 10 and not upCoord in self.toExplore:
+                    if self.measures.compass > -20 and self.measures.compass < 20 and not upCoord in self.toExplore:
                         drawMaze(intX, intY+1, 'H')
-                    elif self.measures.compass > 80 and self.measures.compass < 100 and not leftCoord in self.toExplore:
+                    elif self.measures.compass > 70 and self.measures.compass < 110 and not leftCoord in self.toExplore:
                         drawMaze(intX-1, intY, 'V')
-                    elif self.measures.compass > -100 and self.measures.compass < -80 and not rightCoord in self.toExplore:
+                    elif self.measures.compass > -110 and self.measures.compass < -70 and not rightCoord in self.toExplore:
                         drawMaze(intX+1, intY, 'V')
-                    elif self.measures.compass > 170 and self.measures.compass < -170 and not downCoord in self.toExplore:
+                    elif self.measures.compass > 160 and self.measures.compass < -160 and not downCoord in self.toExplore:
                         drawMaze(intX, intY-1, 'H')
 
                         
@@ -210,20 +211,20 @@ class MyRob(CRobLinkAngs):
             # Check right sensor, if is free add to 'toExplore'
             if self.measures.irSensor[right] < DISTANCE_WALL:
                 #if intX % 2 == 0 and intY % 2 == 0:
-                print('[Path at RIGHT]')
-                if self.measures.compass > -10 and self.measures.compass < 10 and not downCoord in self.toExplore:
+                print('[RIGHT]')
+                if self.measures.compass > -20 and self.measures.compass < 20 and not downCoord in self.toExplore:
                     toAdd.insert(-1,downCoord)
                     drawMaze(*downCoord, 'S')
                     drawMaze(intX, intY-1, 'S')
-                elif self.measures.compass > 80 and self.measures.compass < 100 and not rightCoord in self.toExplore:
+                elif self.measures.compass > 70 and self.measures.compass < 110 and not rightCoord in self.toExplore:
                     toAdd.insert(-1,rightCoord)
                     drawMaze(*rightCoord, 'S')
                     drawMaze(intX+1, intY, 'S')
-                elif self.measures.compass > -100 and self.measures.compass < -80 and not leftCoord in self.toExplore:
+                elif self.measures.compass > -110 and self.measures.compass < -70 and not leftCoord in self.toExplore:
                     toAdd.insert(-1,leftCoord)
                     drawMaze(*leftCoord, 'S')
                     drawMaze(intX-1, intY, 'S')
-                elif self.measures.compass > 170 and self.measures.compass < -170 and not upCoord in self.toExplore:
+                elif self.measures.compass > 160 and self.measures.compass < -160 and not upCoord in self.toExplore:
                     toAdd.insert(-1,upCoord)
                     drawMaze(*upCoord, 'S')
                     drawMaze(intX, intY+1, 'S')
@@ -231,13 +232,13 @@ class MyRob(CRobLinkAngs):
             # if not, it's a wall
             else:
                 if intX % 2 == 0 and intY % 2 == 0:
-                    if self.measures.compass > -10 and self.measures.compass < 10 and not downCoord in self.toExplore:
+                    if self.measures.compass > -20 and self.measures.compass < 20 and not downCoord in self.toExplore:
                         drawMaze(intX, intY-1, 'H')
-                    elif self.measures.compass > 80 and self.measures.compass < 100 and not rightCoord in self.toExplore:
+                    elif self.measures.compass > 70 and self.measures.compass < 110 and not rightCoord in self.toExplore:
                         drawMaze(intX+1, intY, 'V')
-                    elif self.measures.compass > -100 and self.measures.compass < -80 and not leftCoord in self.toExplore:
+                    elif self.measures.compass > -110 and self.measures.compass < -70 and not leftCoord in self.toExplore:
                         drawMaze(intX-1, intY, 'V')
-                    elif self.measures.compass > 170 and self.measures.compass < -170 and not upCoord in self.toExplore:
+                    elif self.measures.compass > 160 and self.measures.compass < -160 and not upCoord in self.toExplore:
                         drawMaze(intX, intY+1, 'H')
 
             # printMaze(Maze)
@@ -361,38 +362,47 @@ class MyRob(CRobLinkAngs):
             return round(sqrt(pow(p1[0]-p2[0],2) + pow(p1[1]-p2[1],2)),2)
         
         def angleToDest(x,y):
-            destAngle = degrees(atan(dist((x,y),(x,self.dest[1]))))
-            if self.measures.compass > -10 and self.measures.compass < 10:
-                if (y > self.dest[1]): return round(-destAngle,0)
-                else: return round(destAngle,0)
-            elif self.measures.compass > 80 and self.measures.compass < 100:
-                if (x < self.dest[0]): return round(-destAngle,0)
-                else : return round(destAngle,0)
-            elif self.measures.compass > -100 and self.measures.compass < -80:
-                if (x < self.dest[0]): return round(destAngle,0)
-                else : return round(-destAngle,0)
-            elif self.measures.compass > 170 and self.measures.compass < -170:
-                destAngle = degrees(atan(dist((x,y),(x,self.dest[1]))))
-                if (y > self.dest[1]): return round(destAngle,0)
-                else: return round(-destAngle,0)
+            if dist(self.dest,(x,self.dest[1])) != 0:
+                destAngleHor = degrees( atan( dist((x,y),(x,self.dest[1])) / dist(self.dest,(x,self.dest[1])) ) )
+                # print('H   '+str(destAngleHor) + '   ' + str(x) + '   ' + str(y) + '   ' + str(self.dest))
+                if self.measures.compass > -20 and self.measures.compass < 20:
+                    if (y > self.dest[1]): return round(-destAngleHor,0)
+                    else: return round(destAngleHor,0)
+                elif self.measures.compass > 160 and self.measures.compass < -160:
+                    # destAngle = degrees(atan(dist((x,y),(x,self.dest[1]))))
+                    if (y > self.dest[1]): return round(destAngleHor,0)
+                    else: return round(-destAngleHor,0)
+            if dist(self.dest,(self.dest[0],y)) != 0:
+                destAngleVer = degrees( atan( dist((x,y),(self.dest[0],y)) / dist(self.dest,(self.dest[0],y)) ) )
+                # print('V   '+str(destAngleVer) + '   ' + str(x) + '   ' + str(y)+ '   ' + str(self.dest))
+                if self.measures.compass > 70 and self.measures.compass < 110:
+                    if (x < self.dest[0]): return round(-destAngleVer,0)
+                    else : return round(destAngleVer,0)
+                elif self.measures.compass > -110 and self.measures.compass < -70:
+                    if (x < self.dest[0]): return round(destAngleVer,0)
+                    else : return round(-destAngleVer,0)
+            else: 
+                print('DIVIDE BY 0')
 
         def allign(x,y):
             angle = angleToDest(x,y)
             if angle == None: return
-            if angle < 0:
-                if (abs(angle) < 2):
-                    self.driveMotors(1.2*LOW_ROTATION_SPEED,LOW_ROTATION_SPEED)
-                    print('LOW ALLIGN RIGHT')
-                else:
-                    self.driveMotors(1.5*LOW_ROTATION_SPEED,LOW_ROTATION_SPEED)
-                    print("ALlIGN RIGHT")
-            elif angle > 0:
-                if (abs(angle) < 2):
-                    self.driveMotors(LOW_ROTATION_SPEED,1.2*LOW_ROTATION_SPEED)
-                    print("LOW ALLIGN LEFT")
-                else:
-                    self.driveMotors(LOW_ROTATION_SPEED,1.5*LOW_ROTATION_SPEED)
-                    print("ALLIGN LEFT")
+            print('ANGLE: '+str(abs(abs(angle)-abs(self.measures.compass))))
+            if (abs(abs(angle)-abs(self.measures.compass))) > 1:
+                if angle < 0:
+                    if (abs(angle) < 2):
+                        self.driveMotors(1.5*LOW_ROTATION_SPEED,LOW_ROTATION_SPEED)
+                        print('LOW ALLIGN RIGHT')
+                    else:
+                        self.driveMotors(2*LOW_ROTATION_SPEED,LOW_ROTATION_SPEED)
+                        print("ALlIGN RIGHT")
+                elif angle > 0:
+                        if (abs(angle) < 2):
+                            self.driveMotors(LOW_ROTATION_SPEED,1.5*LOW_ROTATION_SPEED)
+                            print("LOW ALLIGN LEFT")
+                        else:
+                            self.driveMotors(LOW_ROTATION_SPEED,2*LOW_ROTATION_SPEED)
+                            print("ALLIGN LEFT")
 
         def updateDest():
             self.explored.insert(0,self.dest)
@@ -424,7 +434,7 @@ class MyRob(CRobLinkAngs):
             
             if(Maze[centery+y][centerx+x] == 0):
                 Maze[centery+y][centerx+x] = draw
-                print(sentence+' at '+ str(x) +', '+ str(y))
+                # print(sentence+' at '+ str(x) +', '+ str(y))
 
         def printMaze(maze):    
             for row in maze[::-1]:
@@ -455,6 +465,7 @@ class MyRob(CRobLinkAngs):
         print('Compass: ' + str(self.measures.compass))
         print('Explore:  ' + str(self.toExplore))
         print('Explored: ' + str(self.explored))
+        # if (dist((x,y),self.dest)): 
         print('AngleToDest:  ' + str(angleToDest(x,y)))
         print('DestDistance: ' + str(dist((x,y), self.dest)))
 
@@ -498,12 +509,12 @@ class MyRob(CRobLinkAngs):
             print('LeftSensor: ' + str(self.measures.irSensor[left]))
             print('RightSensor: ' + str(self.measures.irSensor[right]))
             # print('****************************************')
-            allign(x,y)  
+            # allign(x,y)  
 
         else:
             self.driveMotors(DRIVE_SPEED,DRIVE_SPEED)    
             # if dist((x,y), self.dest) > 0.5:
-            #     allign(x,y)
+            allign(x,y)
 
 
     def wander(self):
