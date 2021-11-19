@@ -10,11 +10,11 @@ CELLROWS = 7
 CELLCOLS = 14
 
 # Variables
-DEST_MARGIN = 0.2           # Margem para verificar se está no destino
+DEST_MARGIN = 0.1          # Margem para verificar se está no destino
 DISTANCE_WALL = 1.5         # Valor dos sensores para detetarem uma parede
 ANGLE_MARGIN = 10           # Margem para parar a rotação
-ROTATION_SPEED = 0.05       # Velocidade para rodar
-LOW_ROTATION_SPEED = 0.01   # Velocidade para alinhar
+ROTATION_SPEED = 0.1       # Velocidade para rodar
+LOW_ROTATION_SPEED = 0.02   # Velocidade para alinhar
 DRIVE_SPEED = 0.05          # Velocidade para andar
 rightCoord = (9999,9999)
 leftCoord = (9999,9999)
@@ -240,7 +240,7 @@ class MyRob(CRobLinkAngs):
                     elif self.measures.compass > 170 and self.measures.compass < -170 and not upCoord in self.toExplore:
                         drawMaze(intX, intY+1, 'H')
 
-            printMaze(Maze)
+            # printMaze(Maze)
             mazeToFile(Maze)
             return toAdd
 
@@ -251,8 +251,8 @@ class MyRob(CRobLinkAngs):
             # y = abs(dest[1]) - abs(pos[1])
             # if (x < DEST_MARGIN): inx = True
             # if (y < DEST_MARGIN): iny = True
-            return ((abs(dest[0]) - abs(pos[0])) < DEST_MARGIN and \
-                    (abs(dest[1]) - abs(pos[1])) < DEST_MARGIN )
+            return (abs((abs(dest[0]) - abs(pos[0]))) < DEST_MARGIN and \
+                    abs((abs(dest[1]) - abs(pos[1]))) < DEST_MARGIN)
 
         # def turnArround():
         #     if self.measures.compass > -10 and self.measures.compass < 10:
@@ -275,6 +275,32 @@ class MyRob(CRobLinkAngs):
         #                 self.driveMotors(-ROTATION_SPEED,ROTATION_SPEED)
         #                 self.readSensors()
         #                 print('Comp: ' + str(self.measures.compass))
+
+        # def allign(x,y):
+        #     # front -> UP
+        #     if self.measures.compass > 70 and self.measures.compass < 110:
+        #         if self.measures.compass < 90:
+        #             self.driveMotors(LOW_ROTATION_SPEED, 2*LOW_ROTATION_SPEED)
+        #         elif self.measures.compass > 90:
+        #             self.driveMotors(2*LOW_ROTATION_SPEED, LOW_ROTATION_SPEED)
+        #     # front -> DOWN
+        #     elif self.measures.compass > -110 and self.measures.compass < -70:      
+        #         if self.measures.compass < -90:
+        #             self.driveMotors(LOW_ROTATION_SPEED, 2*LOW_ROTATION_SPEED)
+        #         elif self.measures.compass > -90:
+        #             self.driveMotors(2*LOW_ROTATION_SPEED, LOW_ROTATION_SPEED)
+        #     # front -> RIGHT
+        #     if self.measures.compass > -20 and self.measures.compass < 20:
+        #         if self.measures.compass < 0:
+        #             self.driveMotors(LOW_ROTATION_SPEED, 2*LOW_ROTATION_SPEED)
+        #         elif self.measures.compass > 0:
+        #             self.driveMotors(2*LOW_ROTATION_SPEED, LOW_ROTATION_SPEED)
+        #     # front -> LEFT
+        #     elif self.measures.compass > 160 and self.measures.compass < -160:          
+        #         if self.measures.compass > 0:
+        #             self.driveMotors(LOW_ROTATION_SPEED, 2*LOW_ROTATION_SPEED)
+        #         elif self.measures.compass < 0:
+        #             self.driveMotors(2*LOW_ROTATION_SPEED, LOW_ROTATION_SPEED)
 
         def rotate():
             if self.measures.compass > -10 and self.measures.compass < 10:
@@ -331,42 +357,42 @@ class MyRob(CRobLinkAngs):
                         print('Comp: ' + str(self.measures.compass))
             self.driveMotors(0,0)
 
+        def dist(p1,p2):
+            return round(sqrt(pow(p1[0]-p2[0],2) + pow(p1[1]-p2[1],2)),2)
+        
+        def angleToDest(x,y):
+            destAngle = degrees(atan(dist((x,y),(x,self.dest[1]))))
+            if self.measures.compass > -10 and self.measures.compass < 10:
+                if (y > self.dest[1]): return round(-destAngle,0)
+                else: return round(destAngle,0)
+            elif self.measures.compass > 80 and self.measures.compass < 100:
+                if (x < self.dest[0]): return round(-destAngle,0)
+                else : return round(destAngle,0)
+            elif self.measures.compass > -100 and self.measures.compass < -80:
+                if (x < self.dest[0]): return round(destAngle,0)
+                else : return round(-destAngle,0)
+            elif self.measures.compass > 170 and self.measures.compass < -170:
+                destAngle = degrees(atan(dist((x,y),(x,self.dest[1]))))
+                if (y > self.dest[1]): return round(destAngle,0)
+                else: return round(-destAngle,0)
+
         def allign(x,y):
-            # print('##########################################')
-            # print('Pos: (' + str(x) + ', ' + str(y) + ')')
-            # print('Dest: ' + str(self.dest))
-            # print('##########################################')
-            # if x == self.dest[0]:
-                # front -> UP
-            if self.measures.compass > 70 and self.measures.compass < 110:
-                if self.measures.compass < 90:
-                    self.driveMotors(LOW_ROTATION_SPEED, 2*LOW_ROTATION_SPEED)
-                elif self.measures.compass > 90:
-                    self.driveMotors(2*LOW_ROTATION_SPEED, LOW_ROTATION_SPEED)
-            # front -> DOWN
-            elif self.measures.compass > -110 and self.measures.compass < -70:      
-                if self.measures.compass < -90:
-                    self.driveMotors(LOW_ROTATION_SPEED, 2*LOW_ROTATION_SPEED)
-                elif self.measures.compass > -90:
-                    self.driveMotors(2*LOW_ROTATION_SPEED, LOW_ROTATION_SPEED)
-
-            # elif y == self.dest[1]:
-                # front -> RIGHT
-            if self.measures.compass > -20 and self.measures.compass < 20:
-                if self.measures.compass < 0:
-                    self.driveMotors(LOW_ROTATION_SPEED, 2*LOW_ROTATION_SPEED)
-                elif self.measures.compass > 0:
-                    self.driveMotors(2*LOW_ROTATION_SPEED, LOW_ROTATION_SPEED)
-            # front -> LEFT
-            elif self.measures.compass > 160 and self.measures.compass < -160:          
-                if self.measures.compass > 0:
-                    self.driveMotors(LOW_ROTATION_SPEED, 2*LOW_ROTATION_SPEED)
-                elif self.measures.compass < 0:
-                    self.driveMotors(2*LOW_ROTATION_SPEED, LOW_ROTATION_SPEED)
-
-            # else:
-            #     print('EXIT IN allign()')
-            #     sys.exit()
+            angle = angleToDest(x,y)
+            if angle == None: return
+            if angle < 0:
+                if (abs(angle) < 2):
+                    self.driveMotors(1.2*LOW_ROTATION_SPEED,LOW_ROTATION_SPEED)
+                    print('LOW ALLIGN RIGHT')
+                else:
+                    self.driveMotors(1.5*LOW_ROTATION_SPEED,LOW_ROTATION_SPEED)
+                    print("ALlIGN RIGHT")
+            elif angle > 0:
+                if (abs(angle) < 2):
+                    self.driveMotors(LOW_ROTATION_SPEED,1.2*LOW_ROTATION_SPEED)
+                    print("LOW ALLIGN LEFT")
+                else:
+                    self.driveMotors(LOW_ROTATION_SPEED,1.5*LOW_ROTATION_SPEED)
+                    print("ALLIGN LEFT")
 
         def updateDest():
             self.explored.insert(0,self.dest)
@@ -412,47 +438,7 @@ class MyRob(CRobLinkAngs):
                     for col in row:
                         txt_file.write(str(col).replace('0',' '))
                     txt_file.write("\n")            
-       
-        def angleToDest(self, pos, dest, compass):
-            right_neighbor = (pos[0] + 2, pos[1])
-            left_neighbor = (pos[0] - 2, pos[1])
-            up_neighbor = (pos[0], pos[1] + 2)
-            down_neighbor = (pos[0], pos[1] - 2)
-            destAngle = 0
 
-            if(dest != right_neighbor and dest != left_neighbor and dest != up_neighbor and dest != down_neighbor):
-                print("Wrong destination")   
-            else:
-                if compass > -10 and compass < 10:
-                    if (dest == left_neighbor): 
-                        destAngle = 180
-                    elif (dest == up_neighbor): 
-                        destAngle = 90
-                    elif (dest == down_neighbor): 
-                        destAngle = -90        
-                elif compass > 80 and compass < 100:
-                    if (dest == left_neighbor): 
-                        destAngle = 90
-                    elif (dest == right_neighbor): 
-                        destAngle = -90
-                    elif (dest == down_neighbor): 
-                        destAngle = 180      
-                elif compass > -100 and compass < -80:
-                    if (dest == left_neighbor): 
-                        destAngle = -90
-                    elif (dest == right_neighbor): 
-                        destAngle = 90
-                    elif (dest == up_neighbor): 
-                        destAngle = 180 
-                elif compass > 170 and compass < -170:
-                    if (dest == up_neighbor): 
-                        destAngle = -90
-                    elif (dest == right_neighbor): 
-                        destAngle = 180
-                    elif (dest == down_neighbor): 
-                        destAngle = 90 
-
-            return destAngle   
 
         (x,y) = getCoord()
         intX = int(round(x,0))
@@ -469,12 +455,13 @@ class MyRob(CRobLinkAngs):
         print('Compass: ' + str(self.measures.compass))
         print('Explore:  ' + str(self.toExplore))
         print('Explored: ' + str(self.explored))
-
+        print('AngleToDest:  ' + str(angleToDest(x,y)))
+        print('DestDistance: ' + str(dist((x,y), self.dest)))
 
         if inDest((x,y), self.dest):
 
-            if self.cycle == 0:
-                self.driveMotors(DRIVE_SPEED,DRIVE_SPEED)
+            # if self.cycle == 0:
+            #     self.driveMotors(DRIVE_SPEED,DRIVE_SPEED)
             # else:
             #     self.driveMotors(0,0)
 
@@ -491,7 +478,7 @@ class MyRob(CRobLinkAngs):
             # print('UpCoord: ' + str(upCoord))
 
             self.driveMotors(0,0)
-            time.sleep(0.1)
+            # time.sleep(0.1)
 
             toAdd = checkSensors(intX, intY)
             print('toAdd: ' + str(toAdd))
@@ -511,12 +498,12 @@ class MyRob(CRobLinkAngs):
             print('LeftSensor: ' + str(self.measures.irSensor[left]))
             print('RightSensor: ' + str(self.measures.irSensor[right]))
             # print('****************************************')
+            allign(x,y)  
 
         else:
-            self.driveMotors(DRIVE_SPEED,DRIVE_SPEED)          
-
-        allign(intX,intY)  
-
+            self.driveMotors(DRIVE_SPEED,DRIVE_SPEED)    
+            # if dist((x,y), self.dest) > 0.5:
+            #     allign(x,y)
 
 
     def wander(self):
