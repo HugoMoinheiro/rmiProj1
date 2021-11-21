@@ -10,14 +10,14 @@ CELLROWS = 7
 CELLCOLS = 14
 
 # Variables
-DEST_MARG = 0.2
+DEST_MARG = 0.3
 DEST_MARGIN = 0.4           # Margem para verificar se está no destino
 DISTANCE_WALL = 1.1         # Valor dos sensores para detetarem uma parede
 ANGLE_MARGIN = 20           # Margem para parar a rotação
 ANGLE_TOL = 5
 ROTATION_SPEED = 0.1        # Velocidade para rodar
 LOW_ROTATION_SPEED = 0.01   # Velocidade para alinhar
-DRIVE_SPEED = 0.1          # Velocidade para andar
+DRIVE_SPEED = 0.15          # Velocidade para andar
 STOP_DIST = 4
 ANGLE_TOL = 40
 READ_QUANT = 2
@@ -348,13 +348,13 @@ class MyRob(CRobLinkAngs):
                     while (self.measures.compass > -90 + ANGLE_MARGIN): 
                         self.driveMotors(ROTATION_SPEED,-ROTATION_SPEED)
                         self.readSensors()
-                        print('Comp(r): ' + str(self.measures.compass))
+                        # print('Comp(r): ' + str(self.measures.compass))
                 elif self.dest == upCoord:
                     # Turn left
                     while (self.measures.compass < 90 - ANGLE_MARGIN):
                         self.driveMotors(-ROTATION_SPEED,ROTATION_SPEED)
                         self.readSensors()
-                        print('Comp(r): ' + str(self.measures.compass))
+                        # print('Comp(r): ' + str(self.measures.compass))
                         
             elif self.measures.compass > 180-ANGLE_TOL or self.measures.compass < -180+ANGLE_TOL:
                 # print('----ROTATE----')
@@ -374,7 +374,7 @@ class MyRob(CRobLinkAngs):
                         if self.measures.compass == -180: compass = 0
                         elif self.measures.compass < 0: compass = self.measures.compass + 180
                         elif self.measures.compass > 0: compass = -(180 - self.measures.compass)
-                        print('Comp(r): ' + str(self.measures.compass))
+                        # print('Comp(r): ' + str(self.measures.compass))
                 elif self.dest == upCoord:
                     # print('+++++++++++++++++++++++++')
                     # print(compass)
@@ -385,7 +385,7 @@ class MyRob(CRobLinkAngs):
                         if self.measures.compass == -180: compass = 0
                         elif self.measures.compass < 0: compass = self.measures.compass + 180
                         elif self.measures.compass > 0: compass = -(180 - self.measures.compass)
-                        print('Comp(r): ' + str(self.measures.compass))
+                        # print('Comp(r): ' + str(self.measures.compass))
 
             elif self.measures.compass > 90-ANGLE_TOL and self.measures.compass < 90+ANGLE_TOL:
                 if self.dest == leftCoord:
@@ -393,13 +393,13 @@ class MyRob(CRobLinkAngs):
                     while (self.measures.compass < 180 - ANGLE_MARGIN): 
                         self.driveMotors(-ROTATION_SPEED,ROTATION_SPEED)
                         self.readSensors()
-                        print('Comp(r): ' + str(self.measures.compass))
+                        # print('Comp(r): ' + str(self.measures.compass))
                 elif self.dest == rightCoord:
                     # Turn right
                     while (self.measures.compass > 0 + ANGLE_MARGIN):
                         self.driveMotors(ROTATION_SPEED,-ROTATION_SPEED)
                         self.readSensors()
-                        print('Comp(r): ' + str(self.measures.compass))
+                        # print('Comp(r): ' + str(self.measures.compass))
 
             elif self.measures.compass > -90-ANGLE_TOL and self.measures.compass < -90+ANGLE_TOL:
                 if self.dest == leftCoord:
@@ -407,13 +407,13 @@ class MyRob(CRobLinkAngs):
                     while (self.measures.compass > -180 + ANGLE_MARGIN): 
                         self.driveMotors(ROTATION_SPEED,-ROTATION_SPEED)
                         self.readSensors()
-                        print('Comp(r): ' + str(self.measures.compass))
+                        # print('Comp(r): ' + str(self.measures.compass))
                 elif self.dest == rightCoord:
                     # Turn left
                     while (self.measures.compass < 0 - ANGLE_MARGIN):
                         self.driveMotors(-ROTATION_SPEED,ROTATION_SPEED)
                         self.readSensors()
-                        print('Comp(r): ' + str(self.measures.compass))
+                        # print('Comp(r): ' + str(self.measures.compass))
 
             else:
                 print("ERRO NO ROTATE (NO DIRECTION)")
@@ -495,12 +495,12 @@ class MyRob(CRobLinkAngs):
                 if self.measures.compass < 0:
                     while self.measures.compass < angle:
                         self.driveMotors(-LOW_ROTATION_SPEED,LOW_ROTATION_SPEED)
-                        print('Comp(a): ' + str(self.measures.compass))
+                        # print('Comp(a): ' + str(self.measures.compass))
                         self.readSensors()
                 elif self.measures.compass > 0:
                     while self.measures.compass > angle:
                         self.driveMotors(LOW_ROTATION_SPEED,-LOW_ROTATION_SPEED)
-                        print('Comp(a): ' + str(self.measures.compass))
+                        # print('Comp(a): ' + str(self.measures.compass))
                         self.readSensors()
             
             elif self.measures.compass > 180-ANGLE_TOL or self.measures.compass < -180+ANGLE_TOL:
@@ -521,7 +521,7 @@ class MyRob(CRobLinkAngs):
                         if self.measures.compass == -180: compass = 0
                         elif self.measures.compass < 0: compass = self.measures.compass + 180
                         elif self.measures.compass > 0: compass = -(180 - self.measures.compass)
-                        print('Comp(a): ' + str(self.measures.compass))
+                        # print('Comp(a): ' + str(self.measures.compass))
                 elif compass < 0:
                     # print(' (2)')
                     while compass < angle:
@@ -532,7 +532,7 @@ class MyRob(CRobLinkAngs):
                         if self.measures.compass == -180: compass = 0
                         elif self.measures.compass < 0: compass = self.measures.compass + 180
                         elif self.measures.compass > 0: compass = -(180 - self.measures.compass)
-                        print('Comp(a): ' + str(self.measures.compass))
+                        # print('Comp(a): ' + str(self.measures.compass))
             
             elif self.measures.compass > 90-ANGLE_TOL and self.measures.compass < 90+ANGLE_TOL:
                 # print('3#######################################')
@@ -541,12 +541,12 @@ class MyRob(CRobLinkAngs):
                 if self.measures.compass < 90:
                     while self.measures.compass < 90 + angle:
                         self.driveMotors(-LOW_ROTATION_SPEED,LOW_ROTATION_SPEED)
-                        print('Comp(a): ' + str(self.measures.compass))
+                        # print('Comp(a): ' + str(self.measures.compass))
                         self.readSensors()
                 elif self.measures.compass > 90:
                     while self.measures.compass > 90 + angle:
                         self.driveMotors(LOW_ROTATION_SPEED,-LOW_ROTATION_SPEED)
-                        print('Comp(a): ' + str(self.measures.compass))
+                        # print('Comp(a): ' + str(self.measures.compass))
                         self.readSensors()
 
             
@@ -557,12 +557,12 @@ class MyRob(CRobLinkAngs):
                 if self.measures.compass < -90:
                     while self.measures.compass < -90 + angle:
                         self.driveMotors(-LOW_ROTATION_SPEED,LOW_ROTATION_SPEED)
-                        print('Comp(a): ' + str(self.measures.compass))
+                        # print('Comp(a): ' + str(self.measures.compass))
                         self.readSensors()
                 elif self.measures.compass > -90:
                     while self.measures.compass > -90 + angle:
                         self.driveMotors(LOW_ROTATION_SPEED,-LOW_ROTATION_SPEED)
-                        print('Comp(a): ' + str(self.measures.compass))
+                        # print('Comp(a): ' + str(self.measures.compass))
                         self.readSensors()
             # print('########################################')
 
@@ -600,23 +600,6 @@ class MyRob(CRobLinkAngs):
                         txt_file.write(str(col).replace('0',' '))
                     txt_file.write("\n")            
 
-
-        # def isNeighboor(p1,p2):
-        #     intx1 = round(p1[0],0)
-        #     inty1 = round(p1[1],0)
-        #     r = (intx1 + 2, inty1)
-        #     l = (intx1 - 2, inty1)
-        #     u = (intx1, inty1 + 2)
-        #     d = (intx1, inty1 - 2)
-        #     neighboors = [r, l, u, d]
-        #     # print('++++++++++++++++++++++++++')
-        #     # print('if ' + str(p2) + ' in ' + str(neighboors) + ' -> ' + str(p2 in neighboors))
-        #     # print('++++++++++++++++++++++++++')
-        #     if p2 in neighboors:
-        #         return True
-        #     else:                
-        #         return False
-
         
         def isNeighboor2(p1,p2):
             intx1 = round(p1[0],0)
@@ -649,28 +632,28 @@ class MyRob(CRobLinkAngs):
                 print('NOT DIRECTION isNeighboor')
                 sys.exit()
             neighboors = [ri, le, fr, ba]
-            print('-----------------------------')
-            print('if ' + str(p2) + ' in ' + str(neighboors) + ' -> ' + str(p2 in neighboors))
-            print('-----------------------------')
+            # print('-----------------------------')
+            # print('if ' + str(p2) + ' in ' + str(neighboors) + ' -> ' + str(p2 in neighboors))
+            # print('-----------------------------')
             
             if p2 == ri:
-                print('right: ' + str(self.measures.irSensor[right]))
+                # print('right: ' + str(self.measures.irSensor[right]))
                 if self.measures.irSensor[right] < DISTANCE_WALL_NEI: return True
                 else: return False
             elif p2 == le:
-                print('left: ' + str(self.measures.irSensor[left]))
+                # print('left: ' + str(self.measures.irSensor[left]))
                 if self.measures.irSensor[left] < DISTANCE_WALL_NEI: return True
                 else: return False
             elif p2 == fr:
-                print('center: ' + str(self.measures.irSensor[center]))
+                # print('center: ' + str(self.measures.irSensor[center]))
                 if self.measures.irSensor[center] < DISTANCE_WALL_NEI: return True
                 else: return False
             elif p2 == ba:
-                print('back: ' + str(self.measures.irSensor[back]))
+                # print('back: ' + str(self.measures.irSensor[back]))
                 if self.measures.irSensor[back] < DISTANCE_WALL_NEI: return True
                 else: return False
             else:
-                print('---FALSE---')
+                # print('---FALSE---')
                 return False
 
 
@@ -702,26 +685,70 @@ class MyRob(CRobLinkAngs):
             #         self.finish()
             #         sys.exit()
             # else:
-            #     self.dest = self.path.pop(0)          
+            #     self.dest = self.path.pop(0)      
+
+
+        def repetedInPath():
+            rep = []
+            tcount = 0
+            for t in self.path:
+                t2count = 0
+                for t2 in self.path:
+                    if t == t2:
+                        if tcount < t2count:
+                            rep.append((tcount,t2count))
+                            tcount = t2count
+                            t2count += 1
+                    t2count += 1
+                tcount += 1
+            return rep
+        
+
+        def removeRep():
+            if len(repetedInPath()) > 0:
+                # print('=====================================================================================================================')
+                # print('=====================================================================================================================')
+                # print('=====================================================================================================================')
+                # print(self.path)
+                # print(repetedInPath())
+                # print('=====================================================================================================================')
+                repeted = repetedInPath()
+                tmpPath = []
+                for r in repeted:
+                    insert = True
+                    for i in range(0,len(self.path)):
+                        if i != r[0] and insert:
+                            tmpPath.append(self.path[i])
+                        else:
+                            insert = False
+                        if i == r[1]:
+                            insert = True
+                            tmpPath.append(self.path[i])
+                self.path = tmpPath
+                self.toExplore[0] = self.path
+                # print(tmpPath)
+                # print('=====================================================================================================================')
+                # print('=====================================================================================================================')
+                # print('=====================================================================================================================')
+
 
         def updateDest():
             self.path = self.toExplore[0]
 
-            print('»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»' + str(self.path[-1]))
+            for n in range(0, len(self.toExplore)):
+                self.toExplore[n].insert(0, self.dest)
+                # print('c1 »»»»»»»» ' + str(c1))
+            
+            removeRep()
+
             if self.path[-1] == self.dest:
                 # print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
                 # print('toExplore ' + str(self.toExplore))
                 self.toExplore = self.toExplore[1:]
                 self.path = self.toExplore[0]
 
-
-            for n in range(0, len(self.toExplore)):
-                self.toExplore[n].insert(0, self.dest)
-                # print('c1 »»»»»»»» ' + str(c1))
-
             if self.path[0] == self.dest:
                 self.path = self.path[1:]
-
 
             # print('************** ' + str(self.path) + ' ? ' + str(len(self.path)))
             if len(self.path) == 1:
@@ -760,9 +787,11 @@ class MyRob(CRobLinkAngs):
         print('Pos: (' + str(x) + ', ' + str(y) + ')  \tDest: ' + str(self.dest))
         print('Compass: ' + str(self.measures.compass))
         print('AngleToDest:  ' + str(angleToDest(x,y)))
-        print('Explore:  ' + str(self.toExplore))
-        print('Explored: ' + str(self.explored))
-        print('Path: ' + str(self.path))
+        # print('Explore: ')
+        # for e in self.toExplore:
+        #     print('      ' + str(e))
+        # print('Explored: ' + str(self.explored))
+        # print('Path: ' + str(self.path))
         # print('DestDistance: ' + str(dist((x,y), self.dest)))
 
         # if self.measures.irSensor[center] > STOP_DIST:
@@ -801,8 +830,8 @@ class MyRob(CRobLinkAngs):
             # time.sleep(0.1)
 
             toAdd = checkSensors(intX, intY)
-            print('toAdd: ' + str(toAdd))
-            print(' (1) toExplore:     ' + str(self.toExplore))
+            # print('toAdd: ' + str(toAdd))
+            # print(' (1) toExplore:     ' + str(self.toExplore))
 
             for coord in toAdd:
                 # print('coord »»»»»»»»»» ' + str(coord))
@@ -819,7 +848,7 @@ class MyRob(CRobLinkAngs):
                                 break       
                         # print('2 toExplore »»»»»»»»»» ' + str(self.toExplore))
 
-            print(' (2) toExplore:     ' + str(self.toExplore))
+            # print(' (2) toExplore:     ' + str(self.toExplore))
 
             r = (self.dest[0] + 2, self.dest[1])
             l = (self.dest[0] - 2, self.dest[1])
@@ -831,21 +860,12 @@ class MyRob(CRobLinkAngs):
             elif self.measures.compass > -90-ANGLE_TOL and self.measures.compass < -90+ANGLE_TOL: ba = u
 
             updateDest()
-            print(' (3) toExplore:     ' + str(self.toExplore))
+            # print(' (3) toExplore:     ' + str(self.toExplore))
 
             if (len(toAdd) < 1) or (self.dest == ba):
                 turnArround()
             else:
                 rotate()
-            print(' (4) toExplore:     ' + str(self.toExplore))
-
-            # for n in range(0, len(self.toExplore)):
-            #     for i in range(0, len(self.toExplore[n])):
-            #         for j in range(i+1, len(self.toExplore[n])):
-            #             if self.toExplore[n][i] == self.toExplore[n][j]:
-            #                 for k in range(i,j):
-            #                     print('i'+str(i)+' j'+str(j)+' k'+str(k)+' n'+str(n))
-            #                     self.toExplore[n].pop(k)
 
             # print('LeftSensor: ' + str(self.measures.irSensor[left]))
             # print('RightSensor: ' + str(self.measures.irSensor[right]))
