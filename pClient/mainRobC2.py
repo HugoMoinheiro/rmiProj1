@@ -1,9 +1,7 @@
 import sys
 from croblink import *
 from math import *
-from tree_search import *
 import xml.etree.ElementTree as ET
-import math
 
 import time
 
@@ -12,14 +10,14 @@ CELLROWS = 7
 CELLCOLS = 14
 
 # Variables
-DEST_MARG = 0.2
+DEST_MARG = 0.3
 DEST_MARGIN = 0.4           # Margem para verificar se está no destino
 DISTANCE_WALL = 1.1         # Valor dos sensores para detetarem uma parede
 ANGLE_MARGIN = 20           # Margem para parar a rotação
 ANGLE_TOL = 5
 ROTATION_SPEED = 0.1        # Velocidade para rodar
 LOW_ROTATION_SPEED = 0.01   # Velocidade para alinhar
-DRIVE_SPEED = 0.1          # Velocidade para andar
+DRIVE_SPEED = 0.15          # Velocidade para andar
 STOP_DIST = 4
 ANGLE_TOL = 40
 READ_QUANT = 2
@@ -36,11 +34,6 @@ back = 3
 maze_width, maze_heigth = 55, 27
 centerx, centery = 27, 13 
 Maze = [[0 for x in range(maze_width)] for y in range(maze_heigth)] 
-
-connections = []
-beacons = []
-t_search = []
-aux = []
 
 class MyRob(CRobLinkAngs):
     def __init__(self, rob_name, rob_id, angles, host):
@@ -118,7 +111,6 @@ class MyRob(CRobLinkAngs):
                 #self.wander()
                 self.goC2()
                 self.cycle = self.cycle + 1
-
 
     def goC2(self):
 
@@ -328,13 +320,13 @@ class MyRob(CRobLinkAngs):
                     while (self.measures.compass > -90 + ANGLE_MARGIN): 
                         self.driveMotors(ROTATION_SPEED,-ROTATION_SPEED)
                         self.readSensors()
-                        #print('Comp(r): ' + str(self.measures.compass))
+                        # print('Comp(r): ' + str(self.measures.compass))
                 elif self.dest == upCoord:
                     # Turn left
                     while (self.measures.compass < 90 - ANGLE_MARGIN):
                         self.driveMotors(-ROTATION_SPEED,ROTATION_SPEED)
                         self.readSensors()
-                        #print('Comp(r): ' + str(self.measures.compass))
+                        # print('Comp(r): ' + str(self.measures.compass))
                         
             elif self.measures.compass > 180-ANGLE_TOL or self.measures.compass < -180+ANGLE_TOL:
                 # print('----ROTATE----')
@@ -354,7 +346,7 @@ class MyRob(CRobLinkAngs):
                         if self.measures.compass == -180: compass = 0
                         elif self.measures.compass < 0: compass = self.measures.compass + 180
                         elif self.measures.compass > 0: compass = -(180 - self.measures.compass)
-                        #print('Comp(r): ' + str(self.measures.compass))
+                        # print('Comp(r): ' + str(self.measures.compass))
                 elif self.dest == upCoord:
                     # print('+++++++++++++++++++++++++')
                     # print(compass)
@@ -365,7 +357,7 @@ class MyRob(CRobLinkAngs):
                         if self.measures.compass == -180: compass = 0
                         elif self.measures.compass < 0: compass = self.measures.compass + 180
                         elif self.measures.compass > 0: compass = -(180 - self.measures.compass)
-                        #print('Comp(r): ' + str(self.measures.compass))
+                        # print('Comp(r): ' + str(self.measures.compass))
 
             elif self.measures.compass > 90-ANGLE_TOL and self.measures.compass < 90+ANGLE_TOL:
                 if self.dest == leftCoord:
@@ -373,13 +365,13 @@ class MyRob(CRobLinkAngs):
                     while (self.measures.compass < 180 - ANGLE_MARGIN): 
                         self.driveMotors(-ROTATION_SPEED,ROTATION_SPEED)
                         self.readSensors()
-                        #print('Comp(r): ' + str(self.measures.compass))
+                        # print('Comp(r): ' + str(self.measures.compass))
                 elif self.dest == rightCoord:
                     # Turn right
                     while (self.measures.compass > 0 + ANGLE_MARGIN):
                         self.driveMotors(ROTATION_SPEED,-ROTATION_SPEED)
                         self.readSensors()
-                        #print('Comp(r): ' + str(self.measures.compass))
+                        # print('Comp(r): ' + str(self.measures.compass))
 
             elif self.measures.compass > -90-ANGLE_TOL and self.measures.compass < -90+ANGLE_TOL:
                 if self.dest == leftCoord:
@@ -387,13 +379,13 @@ class MyRob(CRobLinkAngs):
                     while (self.measures.compass > -180 + ANGLE_MARGIN): 
                         self.driveMotors(ROTATION_SPEED,-ROTATION_SPEED)
                         self.readSensors()
-                        #print('Comp(r): ' + str(self.measures.compass))
+                        # print('Comp(r): ' + str(self.measures.compass))
                 elif self.dest == rightCoord:
                     # Turn left
                     while (self.measures.compass < 0 - ANGLE_MARGIN):
                         self.driveMotors(-ROTATION_SPEED,ROTATION_SPEED)
                         self.readSensors()
-                        #print('Comp(r): ' + str(self.measures.compass))
+                        # print('Comp(r): ' + str(self.measures.compass))
 
             else:
                 print("ERRO NO ROTATE (NO DIRECTION)")
@@ -475,12 +467,12 @@ class MyRob(CRobLinkAngs):
                 if self.measures.compass < 0:
                     while self.measures.compass < angle:
                         self.driveMotors(-LOW_ROTATION_SPEED,LOW_ROTATION_SPEED)
-                        print('Comp(a): ' + str(self.measures.compass))
+                        # print('Comp(a): ' + str(self.measures.compass))
                         self.readSensors()
                 elif self.measures.compass > 0:
                     while self.measures.compass > angle:
                         self.driveMotors(LOW_ROTATION_SPEED,-LOW_ROTATION_SPEED)
-                        print('Comp(a): ' + str(self.measures.compass))
+                        # print('Comp(a): ' + str(self.measures.compass))
                         self.readSensors()
             
             elif self.measures.compass > 180-ANGLE_TOL or self.measures.compass < -180+ANGLE_TOL:
@@ -501,7 +493,7 @@ class MyRob(CRobLinkAngs):
                         if self.measures.compass == -180: compass = 0
                         elif self.measures.compass < 0: compass = self.measures.compass + 180
                         elif self.measures.compass > 0: compass = -(180 - self.measures.compass)
-                        #print('Comp(a): ' + str(self.measures.compass))
+                        # print('Comp(a): ' + str(self.measures.compass))
                 elif compass < 0:
                     # print(' (2)')
                     while compass < angle:
@@ -512,7 +504,7 @@ class MyRob(CRobLinkAngs):
                         if self.measures.compass == -180: compass = 0
                         elif self.measures.compass < 0: compass = self.measures.compass + 180
                         elif self.measures.compass > 0: compass = -(180 - self.measures.compass)
-                        #print('Comp(a): ' + str(self.measures.compass))
+                        # print('Comp(a): ' + str(self.measures.compass))
             
             elif self.measures.compass > 90-ANGLE_TOL and self.measures.compass < 90+ANGLE_TOL:
                 # print('3#######################################')
@@ -521,12 +513,12 @@ class MyRob(CRobLinkAngs):
                 if self.measures.compass < 90:
                     while self.measures.compass < 90 + angle:
                         self.driveMotors(-LOW_ROTATION_SPEED,LOW_ROTATION_SPEED)
-                        #print('Comp(a): ' + str(self.measures.compass))
+                        # print('Comp(a): ' + str(self.measures.compass))
                         self.readSensors()
                 elif self.measures.compass > 90:
                     while self.measures.compass > 90 + angle:
                         self.driveMotors(LOW_ROTATION_SPEED,-LOW_ROTATION_SPEED)
-                        #print('Comp(a): ' + str(self.measures.compass))
+                        # print('Comp(a): ' + str(self.measures.compass))
                         self.readSensors()
 
             
@@ -537,12 +529,12 @@ class MyRob(CRobLinkAngs):
                 if self.measures.compass < -90:
                     while self.measures.compass < -90 + angle:
                         self.driveMotors(-LOW_ROTATION_SPEED,LOW_ROTATION_SPEED)
-                        #print('Comp(a): ' + str(self.measures.compass))
+                        # print('Comp(a): ' + str(self.measures.compass))
                         self.readSensors()
                 elif self.measures.compass > -90:
                     while self.measures.compass > -90 + angle:
                         self.driveMotors(LOW_ROTATION_SPEED,-LOW_ROTATION_SPEED)
-                        #print('Comp(a): ' + str(self.measures.compass))
+                        # print('Comp(a): ' + str(self.measures.compass))
                         self.readSensors()
             # print('########################################')
 
@@ -574,28 +566,11 @@ class MyRob(CRobLinkAngs):
 
 
         def mazeToFile(maze):
-            with open("maze.txt", "w") as txt_file:
+            with open("file.out", "w") as txt_file:
                 for row in maze[::-1]:
                     for col in row:
                         txt_file.write(str(col).replace('0',' '))
                     txt_file.write("\n")            
-
-
-        #  def isNeighboor(p1,p2):
-        #     intx1 = round(p1[0],0)
-        #     inty1 = round(p1[1],0)
-        #     r = (intx1 + 2, inty1)
-        #     l = (intx1 - 2, inty1)
-        #     u = (intx1, inty1 + 2)
-        #     d = (intx1, inty1 - 2)
-        #     neighboors = [r, l, u, d]
-        #     # print('++++++++++++++++++++++++++')
-        #     # print('if ' + str(p2) + ' in ' + str(neighboors) + ' -> ' + str(p2 in neighboors))
-        #     # print('++++++++++++++++++++++++++')
-        #     if p2 in neighboors:
-        #         return True
-        #     else:                
-        #         return False
 
         
         def isNeighboor2(p1,p2):
@@ -634,23 +609,23 @@ class MyRob(CRobLinkAngs):
             # print('-----------------------------')
             
             if p2 == ri:
-                #print('right: ' + str(self.measures.irSensor[right]))
+                # print('right: ' + str(self.measures.irSensor[right]))
                 if self.measures.irSensor[right] < DISTANCE_WALL_NEI: return True
                 else: return False
             elif p2 == le:
-                #print('left: ' + str(self.measures.irSensor[left]))
+                # print('left: ' + str(self.measures.irSensor[left]))
                 if self.measures.irSensor[left] < DISTANCE_WALL_NEI: return True
                 else: return False
             elif p2 == fr:
-                #print('center: ' + str(self.measures.irSensor[center]))
+                # print('center: ' + str(self.measures.irSensor[center]))
                 if self.measures.irSensor[center] < DISTANCE_WALL_NEI: return True
                 else: return False
             elif p2 == ba:
-                #print('back: ' + str(self.measures.irSensor[back]))
+                # print('back: ' + str(self.measures.irSensor[back]))
                 if self.measures.irSensor[back] < DISTANCE_WALL_NEI: return True
                 else: return False
             else:
-                #print('---FALSE---')
+                # print('---FALSE---')
                 return False
 
 
@@ -682,26 +657,70 @@ class MyRob(CRobLinkAngs):
             #         self.finish()
             #         sys.exit()
             # else:
-            #     self.dest = self.path.pop(0)          
+            #     self.dest = self.path.pop(0)      
+
+
+        def repetedInPath():
+            rep = []
+            tcount = 0
+            for t in self.path:
+                t2count = 0
+                for t2 in self.path:
+                    if t == t2:
+                        if tcount < t2count:
+                            rep.append((tcount,t2count))
+                            tcount = t2count
+                            t2count += 1
+                    t2count += 1
+                tcount += 1
+            return rep
+        
+
+        def removeRep():
+            if len(repetedInPath()) > 0:
+                # print('=====================================================================================================================')
+                # print('=====================================================================================================================')
+                # print('=====================================================================================================================')
+                # print(self.path)
+                # print(repetedInPath())
+                # print('=====================================================================================================================')
+                repeted = repetedInPath()
+                tmpPath = []
+                for r in repeted:
+                    insert = True
+                    for i in range(0,len(self.path)):
+                        if i != r[0] and insert:
+                            tmpPath.append(self.path[i])
+                        else:
+                            insert = False
+                        if i == r[1]:
+                            insert = True
+                            tmpPath.append(self.path[i])
+                self.path = tmpPath
+                self.toExplore[0] = self.path
+                # print(tmpPath)
+                # print('=====================================================================================================================')
+                # print('=====================================================================================================================')
+                # print('=====================================================================================================================')
+
 
         def updateDest():
             self.path = self.toExplore[0]
 
-            print('»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»' + str(self.path[-1]))
+            for n in range(0, len(self.toExplore)):
+                self.toExplore[n].insert(0, self.dest)
+                # print('c1 »»»»»»»» ' + str(c1))
+            
+            removeRep()
+
             if self.path[-1] == self.dest:
                 # print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
                 # print('toExplore ' + str(self.toExplore))
                 self.toExplore = self.toExplore[1:]
                 self.path = self.toExplore[0]
 
-
-            for n in range(0, len(self.toExplore)):
-                self.toExplore[n].insert(0, self.dest)
-                # print('c1 »»»»»»»» ' + str(c1))
-
             if self.path[0] == self.dest:
                 self.path = self.path[1:]
-
 
             # print('************** ' + str(self.path) + ' ? ' + str(len(self.path)))
             if len(self.path) == 1:
@@ -724,34 +743,6 @@ class MyRob(CRobLinkAngs):
                 sys.exit()
 
 
-        def searchBeacons(x, y):
-            # print("len: " + str(len(beacons)))
-            # print('COND: '+str( len(beacons) == self.nBeacons ))
-            if(self.measures.ground != -1):
-                if([intX, intY] not in beacons):
-                    beacons.append([intX, intY])
-                print("nbeac "+ str(self.nBeacons))
-                print("len "+str(len(beacons)))    
-                if(len(beacons) == int(self.nBeacons)):
-                    calcPath()
-                    sys.exit()
-
-            print(beacons)
-
-        def calcPath():
-            global t_search 
-            t_search = [[0, 0]]
-            for i in range (0, int(self.nBeacons)-1):
-                p = SearchProblem(Domain(connections), beacons[i], beacons[i+1])
-                t = SearchTree(p, 'a*')
-                t_search += t.search()[0]
-            
-            print("Path: "+str(t_search))
-
-            with open("path.out", "w") as txt_file:
-                for elem in t_search:
-                    txt_file.write(str(elem).replace(', ',' ').replace('[','').replace(']',''+"\n"))
-
 
         (x,y) = getCoord()
         intX = int(round(x,0))
@@ -766,9 +757,11 @@ class MyRob(CRobLinkAngs):
         print('\t\t  ' + str(self.cycle))
         print("----------------------------------------")
         print('Pos: (' + str(x) + ', ' + str(y) + ')  \tDest: ' + str(self.dest))
-        # print('Compass: ' + str(self.measures.compass))
-        # print('AngleToDest:  ' + str(angleToDest(x,y)))
-        # print('Explore:  ' + str(self.toExplore))
+        print('Compass: ' + str(self.measures.compass))
+        print('AngleToDest:  ' + str(angleToDest(x,y)))
+        # print('Explore: ')
+        # for e in self.toExplore:
+        #     print('      ' + str(e))
         # print('Explored: ' + str(self.explored))
         # print('Path: ' + str(self.path))
         # print('DestDistance: ' + str(dist((x,y), self.dest)))
@@ -809,24 +802,8 @@ class MyRob(CRobLinkAngs):
             # time.sleep(0.1)
 
             toAdd = checkSensors(intX, intY)
-
-            neighbors = [upCoord, downCoord, leftCoord, rightCoord]    
-            
-            global connections, aux
-            #connections += [[[intX, intY], [*n]] for n in neighbors if n in toAdd or n in self.explored]
-            if(len(aux)!=0):
-                if([[aux, [intX, intY]]] not in connections):
-                    connections += [[aux, [intX, intY]]]
-            aux = [intX, intY]
-
-
-
-            print("CONNECTIONS: "+str(connections))
-           
-            print("explored "+str(self.explored))
-            
-            print('toAdd: ' + str(toAdd))
-            #print(' (1) toExplore:     ' + str(self.toExplore))
+            # print('toAdd: ' + str(toAdd))
+            # print(' (1) toExplore:     ' + str(self.toExplore))
 
             for coord in toAdd:
                 # print('coord »»»»»»»»»» ' + str(coord))
@@ -843,7 +820,7 @@ class MyRob(CRobLinkAngs):
                                 break       
                         # print('2 toExplore »»»»»»»»»» ' + str(self.toExplore))
 
-            #print(' (2) toExplore:     ' + str(self.toExplore))
+            # print(' (2) toExplore:     ' + str(self.toExplore))
 
             r = (self.dest[0] + 2, self.dest[1])
             l = (self.dest[0] - 2, self.dest[1])
@@ -855,21 +832,12 @@ class MyRob(CRobLinkAngs):
             elif self.measures.compass > -90-ANGLE_TOL and self.measures.compass < -90+ANGLE_TOL: ba = u
 
             updateDest()
-            #print(' (3) toExplore:     ' + str(self.toExplore))
+            # print(' (3) toExplore:     ' + str(self.toExplore))
 
             if (len(toAdd) < 1) or (self.dest == ba):
                 turnArround()
             else:
                 rotate()
-            #print(' (4) toExplore:     ' + str(self.toExplore))
-
-            # for n in range(0, len(self.toExplore)):
-            #     for i in range(0, len(self.toExplore[n])):
-            #         for j in range(i+1, len(self.toExplore[n])):
-            #             if self.toExplore[n][i] == self.toExplore[n][j]:
-            #                 for k in range(i,j):
-            #                     print('i'+str(i)+' j'+str(j)+' k'+str(k)+' n'+str(n))
-            #                     self.toExplore[n].pop(k)
 
             # print('LeftSensor: ' + str(self.measures.irSensor[left]))
             # print('RightSensor: ' + str(self.measures.irSensor[right]))
@@ -881,12 +849,6 @@ class MyRob(CRobLinkAngs):
             self.leftMem = leftCoord
             self.upMem = upCoord
             self.downMem = downCoord
-            
-            #searchBeacons(x, y)
-            # p = SearchProblem(Domain(connections), [0,0], [8,0])
-            # t = SearchTree(p, 'a*')
-            # t_search = t.search()
-            # print('Path: '+ str(t_search))
 
         else:   
             if self.measures.irSensor[center] > STOP_DIST:
@@ -920,33 +882,6 @@ class MyRob(CRobLinkAngs):
         else:
             print('Go')
             self.driveMotors(0.1,0.1)
-
-class Domain(SearchDomain):
-
-    def __init__(self,connections):
-        self.connections = connections
-        
-    def actions(self,point): # retorna uma lista de todos os caminhos (outros nos) que posso ir de um no. 
-        actlist = []
-        for (P1,P2) in self.connections:
-            if (P1==point):
-                actlist += [(P1,P2)]
-            elif (P2==point):
-               actlist += [(P2,P1)]
-        return actlist
-        
-    def result(self,point,action): # retorna o no filho 
-        (P1,P2) = action
-        if P1==[point[0], point[1]]:
-            return P2
-            
-    def cost(self, state, action): 
-        return 1
-
-    def heuristic(self, pos, goal):
-        # print("POS "+str(pos) )
-        # print("GOAL "+str(goal) )
-        return math.hypot(pos[0] - goal[0], pos[1] - goal[1])
 
 class Map():
     def __init__(self, filename):
